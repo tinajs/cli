@@ -1,0 +1,32 @@
+{
+  "name": "example",
+  "private": true,
+  "version": "0.0.1",
+  "description": "",
+  "author": "yelo",
+  "scripts": {
+    "clean": "rimraf \"./dist/!(app.json|project.config.json)**\"",
+    "prestart": "run-s clean",
+    "prebuild": "run-s clean",
+    "start": "webpack --watch --progress",
+    "build": "cross-env NODE_ENV=production webpack"
+  },
+  "dependencies": {
+    "@tinajs/tina": "^1.4.0"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.1.0",
+    "@tinajs/babel-preset-mina": "^0.0.0",
+    "@tinajs/browserslist-config-mina": "^0.0.0",
+    "@tinajs/mina-webpack-general": "^0.0.0",
+    "cross-env": "^5.1.1",
+    "npm-run-all": "^4.1.2",
+    "postcss-loader": "^3.0.0",
+    "postcss-px2units": "^0.1.1",
+    "postcss-url": "^7.3.1",
+    "precss": "^2.0.0",
+    "rimraf": "^2.6.2",
+    "webpack": "^4.16.0",
+    "webpack-cli": "^3.1.0"
+  }
+}

@@ -11,10 +11,16 @@ if (!command) {
 }
 
 switch (command) {
-  case 'config':
+  case 'create':
     require('./commands/config')
     break
-  case 'dice':
+  case 'start':
+    require('./commands/dice')
+    break
+  case 'build':
+    require('./commands/dice')
+    break
+  case 'eject':
     require('./commands/dice')
     break
   default:

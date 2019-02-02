@@ -1,0 +1,5 @@
+{
+  "lerna": "3.4.3",
+  "packages": ["packages/example", "packages/@tinajs/*"],
+  "version": "independent"
+}

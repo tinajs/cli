@@ -4,24 +4,27 @@ const MinaEntryPlugin = require('@tinajs/mina-entry-webpack-plugin')
 const MinaRuntimePlugin = require('@tinajs/mina-runtime-webpack-plugin')
 
 const isProduction = process.env.NODE_ENV === 'production'
+const CWD = process.cwd()
+
+const resolveFromWorkingDir = (path) => resolve(CWD, path)
 
 const loaders = {
-  script: 'babel-loader',
+  script: require.resolve('babel-loader'),
   style: {
-    loader: 'postcss-loader',
+    loader: require.resolve('postcss-loader'),
     options: {
       config: {
-        path: resolve('./postcss.config.js'),
+        path: resolveFromWorkingDir('./postcss.config.js'),
       },
     },
   },
 }
 
 module.exports = {
-  context: resolve('src'),
+  context: resolveFromWorkingDir('src'),
   entry: './app.mina',
   output: {
-    path: resolve('dist'),
+    path: resolveFromWorkingDir('dist'),
     filename: '[name]',
     publicPath: '/',
     globalObject: 'wx',
@@ -33,7 +36,7 @@ module.exports = {
         exclude: /node_modules/,
         use: [
           {
-            loader: '@tinajs/mina-loader',
+            loader: require.resolve('@tinajs/mina-loader'),
             options: {
               loaders,
             },
@@ -43,7 +46,7 @@ module.exports = {
       {
         test: /\.mina$/,
         include: /node_modules/,
-        use: '@tinajs/mina-loader',
+        use: require.resolve('@tinajs/mina-loader'),
       },
       {
         test: /\.js$/,
@@ -58,7 +61,7 @@ module.exports = {
       {
         test: /\.(png|jpg|jpeg|gif|svg)$/,
         use: {
-          loader: 'file-loader',
+          loader: require.resolve('file-loader'),
           options: {
             name: 'assets/[name].[hash:6].[ext]',
           },
@@ -67,7 +70,7 @@ module.exports = {
       {
         test: /\.wxs$/,
         use: {
-          loader: 'relative-file-loader',
+          loader: require.resolve('relative-file-loader'),
           options: {
             name: 'wxs/[name].[hash:6].[ext]',
           },
@@ -76,12 +79,12 @@ module.exports = {
       {
         test: /\.wxml$/,
         use: [{
-          loader: 'relative-file-loader',
+          loader: require.resolve('relative-file-loader'),
           options: {
             name: 'wxml/[name].[hash:6].[ext]',
           },
         }, {
-          loader: '@tinajs/wxml-loader',
+          loader: require.resolve('@tinajs/wxml-loader'),
           options: {
             raw: true,
           },

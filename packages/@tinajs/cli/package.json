@@ -1,0 +1,24 @@
+{
+  "name": "@tinajs/cli",
+  "version": "0.0.0",
+  "description": "",
+  "files": [
+    "lib"
+  ],
+  "repository": {
+    "url": "tinajs/tina-cli",
+    "type": "git"
+  },
+  "scripts": {
+    "test": "ava test/*.js"
+  },
+  "author": "yelo",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/tinajs/tina-cli/issues"
+  },
+  "homepage": "https://github.com/tinajs/tina-cli#readme",
+  "devDependencies": {
+    "ava": "^0.25.0"
+  }
+}
