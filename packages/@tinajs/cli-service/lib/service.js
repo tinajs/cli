@@ -1,37 +1,19 @@
-const webpack = require('webpack')
-const base = require('./webpack/base')
-
-function config (options) {
-  return Object.assign({
-    entry: './app.mina',
-  }, base(options).toConfig())
+const COMMANDS = {
+  build: require('./commands/build'),
+  watch: require('./commands/watch'),
 }
 
 class Service {
-  constructor () {
-
+  constructor (cwd) {
+    this.cwd = cwd
   }
 
-  watch () {
-
-  }
-
-  build () {
-    return new Promise((resolve, reject) => {
-      webpack(config(), (err, stats) => {
-        if (err) {
-          return reject(err)
-        }
-
-        if (stats.hasErrors()) {
-          return reject(`Build failed with errors.`)
-        }
-
-        resolve()
-      })
-    })
+  run (command, options) {
+    if (!command in COMMANDS) {
+      return Promise.reject(new Error('Invalid command.'))
+    }
+    return COMMANDS[command](this)
   }
 }
 
 module.exports = Service
-
