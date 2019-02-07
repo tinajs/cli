@@ -21,10 +21,13 @@
     "@tinajs/mina-loader": "1.4.1",
     "@tinajs/mina-runtime-webpack-plugin": "1.1.0",
     "@tinajs/wxml-loader": "0.3.1-fork.1",
+    "@tinajs/wxs-loader": "^1.1.1",
     "babel-loader": "^8.0.4",
+    "debug": "^4.1.1",
     "file-loader": "^1.1.11",
     "postcss-loader": "^2.0.9",
     "relative-file-loader": "^1.1.12",
-    "webpack": "^4.23.1"
+    "webpack": "^4.23.1",
+    "webpack-chain": "^5.2.0"
   }
 }

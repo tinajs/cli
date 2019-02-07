@@ -1,118 +1,145 @@
-const { resolve } = require('path')
-const webpack = require('webpack')
+
+const path = require('path')
+const Config = require('webpack-chain')
+const { EnvironmentPlugin } = require('webpack')
 const MinaEntryPlugin = require('@tinajs/mina-entry-webpack-plugin')
 const MinaRuntimePlugin = require('@tinajs/mina-runtime-webpack-plugin')
 
 const isProduction = process.env.NODE_ENV === 'production'
-const CWD = process.cwd()
 
-const resolveFromWorkingDir = (path) => resolve(CWD, path)
+module.exports = function ({ cwd = process.cwd() }) {
+  const resolve = (p) => path.resolve(cwd, p)
 
-const loaders = {
-  script: require.resolve('babel-loader'),
-  style: {
-    loader: require.resolve('postcss-loader'),
-    options: {
-      config: {
-        path: resolveFromWorkingDir('./postcss.config.js'),
+  const loaders = {
+    script: require.resolve('babel-loader'),
+    style: {
+      loader: require.resolve('postcss-loader'),
+      options: {
+        config: {
+          path: resolve('./postcss.config.js'),
+        },
       },
     },
-  },
-}
+  }
 
-module.exports = {
-  context: resolveFromWorkingDir('src'),
-  entry: './app.mina',
-  output: {
-    path: resolveFromWorkingDir('dist'),
-    filename: '[name]',
-    publicPath: '/',
-    globalObject: 'wx',
-  },
-  module: {
-    rules: [
-      {
-        test: /\.mina$/,
-        exclude: /node_modules/,
-        use: [
-          {
-            loader: require.resolve('@tinajs/mina-loader'),
-            options: {
-              loaders,
-            },
-          },
-        ],
-      },
-      {
-        test: /\.mina$/,
-        include: /node_modules/,
-        use: require.resolve('@tinajs/mina-loader'),
-      },
-      {
-        test: /\.js$/,
-        exclude: /node_modules/,
-        use: loaders.script,
-      },
-      {
-        test: /\.(css|wxss)$/,
-        exclude: /node_modules/,
-        use: loaders.style,
-      },
-      {
-        test: /\.(png|jpg|jpeg|gif|svg)$/,
-        use: {
-          loader: require.resolve('file-loader'),
-          options: {
-            name: 'assets/[name].[hash:6].[ext]',
-          },
-        },
-      },
-      {
-        test: /\.wxs$/,
-        use: {
-          loader: require.resolve('relative-file-loader'),
-          options: {
-            name: 'wxs/[name].[hash:6].[ext]',
-          },
-        },
-      },
-      {
-        test: /\.wxml$/,
-        use: [{
-          loader: require.resolve('relative-file-loader'),
-          options: {
-            name: 'wxml/[name].[hash:6].[ext]',
-          },
-        }, {
-          loader: require.resolve('@tinajs/wxml-loader'),
-          options: {
-            raw: true,
-          },
-        }],
-      },
-    ],
-  },
-  resolve: {
-    symlinks: true,
-  },
-  plugins: [
-    new webpack.EnvironmentPlugin({
-      NODE_ENV: 'development',
-      DEBUG: false,
-    }),
-    new MinaEntryPlugin(),
-    new MinaRuntimePlugin(),
-  ],
-  optimization: {
-    splitChunks: {
+  const config = new Config()
+
+  config.context(resolve('src'))
+
+  config.output
+    .path(resolve('dist'))
+    .filename('[name]')
+    .publicPath('/')
+    .globalObject('wx')
+
+  config.resolve.symlinks(true)
+
+  config.optimization
+    .splitChunks({
       chunks: 'all',
       name: 'common.js',
       minChunks: 2,
       minSize: 0,
-    },
-    runtimeChunk: {
+    })
+    .runtimeChunk({
       name: 'runtime.js',
-    },
-  },
-  mode: isProduction ? 'production' : 'none',
+    })
+
+  config.mode(isProduction ? 'production' : 'none')
+
+  config.module
+    .rule('mina')
+      .test(/\.mina$/)
+      .exclude
+        .add(/node_modules/)
+        .end()
+      .use('mina')
+        .loader(require.resolve('@tinajs/mina-loader'))
+        .options(loaders)
+        .end()
+
+  config.module
+    .rule('mina-independent')
+      .test(/\.mina$/)
+      .include
+        .add(/node_modules/)
+        .end()
+      .use('mina')
+        .loader(require.resolve('@tinajs/mina-loader'))
+        .end()
+
+  config.module
+    .rule('javascript')
+      .test(/\.js$/)
+      .exclude
+        .add(/node_modules/)
+        .end()
+      .use('babel')
+        .loader(require.resolve('babel-loader'))
+        .end()
+
+  config.module
+    .rule('stylesheet')
+      .test(/\.(css|wxss)$/)
+      .exclude
+        .add(/node_modules/)
+        .end()
+      .use('postcss')
+        .loader(require.resolve('postcss-loader'))
+        .end()
+
+  config.module
+    .rule('filter')
+      .test(/\.wxs$/)
+      .use('wxs')
+        .loader(require.resolve('@tinajs/wxs-loader'))
+        .options({
+          name: 'wxs/[path]/[name].[hash:6].[ext]',
+        })
+        .end()
+
+  config.module
+    .rule('template')
+      .test(/\.wxml$/)
+      .use('file')
+        .loader(require.resolve('relative-file-loader'))
+        .options({
+          name: 'wxml/[path]/[name].[hash:6].[ext]',
+        })
+        .end()
+      .use('wxml')
+        .loader(require.resolve('@tinajs/wxml-loader'))
+        .options({
+          raw: true,
+          enforceRelativePath: true,
+          root: resolve('src'),
+        })
+        .end()
+
+  config.module
+    .rule('file')
+      .test(/\.(png|jpg|jpeg|gif|svg)$/)
+      .use('file')
+        .loader(require.resolve('file-loader'))
+        .options({
+          name: 'assets/[name].[hash:6].[ext]',
+        })
+        .end()
+
+  config.plugin('env')
+    .use(EnvironmentPlugin, [{
+      NODE_ENV: 'development',
+      DEBUG: false,
+    }])
+    .end()
+
+  config.plugin('entry')
+    .use(MinaEntryPlugin)
+    .end()
+
+  config.plugin('runtime')
+    .use(MinaRuntimePlugin)
+    .end()
+
+  return config
 }
