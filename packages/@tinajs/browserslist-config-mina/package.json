@@ -2,5 +2,6 @@
   "name": "@tinajs/browserslist-config-mina",
   "version": "0.0.0",
   "description": "",
-  "author": "yelo"
+  "author": "yelo",
+  "license": "Apache-2.0"
 }

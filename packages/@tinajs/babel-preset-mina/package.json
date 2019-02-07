@@ -3,6 +3,7 @@
   "version": "0.0.0",
   "description": "",
   "author": "yelo",
+  "license": "Apache-2.0",
   "dependencies": {
     "@babel/plugin-proposal-class-properties": "^7.1.0",
     "@babel/plugin-proposal-export-default-from": "^7.0.0",

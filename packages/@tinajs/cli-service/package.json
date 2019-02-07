@@ -14,5 +14,17 @@
   "bugs": {
     "url": "https://github.com/tinajs/tina-cli/issues"
   },
-  "homepage": "https://github.com/tinajs/tina-cli#readme"
+  "homepage": "https://github.com/tinajs/tina-cli#readme",
+  "dependencies": {
+    "@babel/core": "^7.1.0",
+    "@tinajs/mina-entry-webpack-plugin": "1.0.15",
+    "@tinajs/mina-loader": "1.4.1",
+    "@tinajs/mina-runtime-webpack-plugin": "1.1.0",
+    "@tinajs/wxml-loader": "0.3.1-fork.1",
+    "babel-loader": "^8.0.4",
+    "file-loader": "^1.1.11",
+    "postcss-loader": "^2.0.9",
+    "relative-file-loader": "^1.1.12",
+    "webpack": "^4.23.1"
+  }
 }

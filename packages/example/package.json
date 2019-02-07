@@ -18,7 +18,7 @@
     "@babel/core": "^7.1.0",
     "@tinajs/babel-preset-mina": "^0.0.0",
     "@tinajs/browserslist-config-mina": "^0.0.0",
-    "@tinajs/mina-webpack-general": "^0.0.0",
+    "@tinajs/cli-service": "^0.0.0",
     "cross-env": "^5.1.1",
     "npm-run-all": "^4.1.2",
     "postcss-loader": "^3.0.0",
