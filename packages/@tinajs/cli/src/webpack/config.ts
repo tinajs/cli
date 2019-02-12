@@ -1,14 +1,13 @@
-
-const path = require('path')
-const Config = require('webpack-chain')
-const { EnvironmentPlugin } = require('webpack')
-const MinaEntryPlugin = require('@tinajs/mina-entry-webpack-plugin')
-const MinaRuntimePlugin = require('@tinajs/mina-runtime-webpack-plugin')
+import * as path from 'path'
+import * as Config from 'webpack-chain'
+import { EnvironmentPlugin } from 'webpack'
+import * as MinaEntryPlugin from '@tinajs/mina-entry-webpack-plugin'
+import * as MinaRuntimePlugin from '@tinajs/mina-runtime-webpack-plugin'
 
 const isProduction = process.env.NODE_ENV === 'production'
 
-module.exports = function ({ cwd = process.cwd() }) {
-  const resolve = (p) => path.resolve(cwd, p)
+export default function createWebpackConfig ({ cwd = process.cwd() }) {
+  const resolve = (p: string) => path.resolve(cwd, p)
 
   const loaders = {
     script: require.resolve('babel-loader'),

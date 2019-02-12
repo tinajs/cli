@@ -1,0 +1,56 @@
+import * as EventEmitter from 'eventemitter3'
+import * as webpack from 'webpack'
+import * as WebpackConfig from 'webpack-chain'
+import createWebpackConfig from './webpack/config'
+import { EventEmitter } from 'events';
+
+export default class Service {
+  private webpackConfig: WebpackConfig
+
+  constructor () {
+    this.webpackConfig = createWebpackConfig({ cwd: process.cwd() })
+  }
+
+  private compiler (watch = false) {
+    const config = Object.assign({
+      entry: './app.mina',
+    }, this.webpackConfig.toConfig())
+    return webpack(config)
+  }
+
+  chainWebpack (fn) {
+    fn(this.webpackConfig)
+  }
+
+  watch () : EventEmitter {
+    const bus = new EventEmitter()
+    this.compiler().watch({}, (err: Error, stats: any) => {
+      if (err) {
+        return bus.emit('error', err)
+      }
+
+      if (stats.hasErrors()) {
+        return bus.emit('error', new Error(`Build failed with errors.`))
+      }
+
+      bus.emit('stats', stats.toString({ colors: true }))
+    })
+    return bus
+  }
+
+  async build () : Promise<string> {
+    return new Promise((resolve, reject) => {
+      this.compiler().run((err: Error, stats: any) => {
+        if (err) {
+          return reject(err)
+        }
+
+        if (stats.hasErrors()) {
+          return reject(new Error(`Build failed with errors.`))
+        }
+
+        resolve(stats.toString({ colors: true }))
+      })
+    })
+  }
+}

@@ -1,24 +1,75 @@
 {
   "name": "@tinajs/cli",
+  "description": "Tailor-made Command-line Tools for Tina.js Development",
   "version": "0.0.0",
-  "description": "",
-  "files": [
-    "lib"
-  ],
-  "repository": {
-    "url": "tinajs/tina-cli",
-    "type": "git"
-  },
-  "scripts": {
-    "test": "ava test/*.js"
-  },
   "author": "yelo",
-  "license": "Apache-2.0",
-  "bugs": {
-    "url": "https://github.com/tinajs/tina-cli/issues"
+  "bin": {
+    "tina": "./bin/run"
   },
-  "homepage": "https://github.com/tinajs/tina-cli#readme",
+  "bugs": "https://github.com/tinajs/cli/issues",
+  "dependencies": {
+    "@babel/core": "^7.1.0",
+    "@oclif/command": "^1.5.10",
+    "@oclif/config": "^1.12.6",
+    "@oclif/plugin-help": "^2.1.6",
+    "@tinajs/mina-entry-webpack-plugin": "1.0.15",
+    "@tinajs/mina-loader": "1.4.1",
+    "@tinajs/mina-runtime-webpack-plugin": "1.1.0",
+    "@tinajs/wxml-loader": "0.3.1-fork.1",
+    "@tinajs/wxs-loader": "^1.1.1",
+    "babel-loader": "^8.0.4",
+    "eventemitter3": "^3.1.0",
+    "file-loader": "^1.1.11",
+    "postcss-loader": "^2.0.9",
+    "relative-file-loader": "^1.1.12",
+    "tslib": "^1.9.3",
+    "webpack": "^4.23.1",
+    "webpack-chain": "^5.2.0"
+  },
   "devDependencies": {
-    "ava": "^0.25.0"
-  }
+    "@oclif/dev-cli": "^1.21.0",
+    "@oclif/test": "^1.2.4",
+    "@oclif/tslint": "^3.1.1",
+    "@types/chai": "^4.1.7",
+    "@types/mocha": "^5.2.5",
+    "@types/node": "^10.12.18",
+    "chai": "^4.2.0",
+    "globby": "^8.0.2",
+    "mocha": "^5.2.0",
+    "nyc": "^13.0.1",
+    "ts-node": "^8.0.2",
+    "tslint": "^5.12.1",
+    "typescript": "^3.3.3"
+  },
+  "engines": {
+    "node": ">=8.0.0"
+  },
+  "files": [
+    "/bin",
+    "/lib",
+    "/npm-shrinkwrap.json",
+    "/oclif.manifest.json"
+  ],
+  "homepage": "https://github.com/tinajs/cli",
+  "keywords": [
+    "oclif"
+  ],
+  "license": "Apache-2.0",
+  "main": "lib/index.js",
+  "oclif": {
+    "commands": "./lib/commands",
+    "bin": "tina",
+    "plugins": [
+      "@oclif/plugin-help"
+    ]
+  },
+  "repository": "/cli",
+  "scripts": {
+    "postpack": "rm -f oclif.manifest.json",
+    "posttest": "tslint -p test -t stylish",
+    "prepack": "rm -rf lib && tsc -b && oclif-dev manifest && oclif-dev readme",
+    "test": "nyc --extension .ts mocha --forbid-only \"test/**/*.test.ts\"",
+    "version": "oclif-dev readme && git add README.md"
+  },
+  "types": "lib/index.d.ts"
 }
