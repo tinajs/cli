@@ -3,23 +3,17 @@ import * as Config from 'webpack-chain'
 import { EnvironmentPlugin } from 'webpack'
 import * as MinaEntryPlugin from '@tinajs/mina-entry-webpack-plugin'
 import * as MinaRuntimePlugin from '@tinajs/mina-runtime-webpack-plugin'
+import WebpackChainFunction from '../declarations/WebpackChainFunction'
 
 const isProduction = process.env.NODE_ENV === 'production'
 
-export default function createWebpackConfig ({ cwd = process.cwd() }) {
-  const resolve = (p: string) => path.resolve(cwd, p)
+interface Option {
+  cwd: string,
+  webpackChainFns: WebpackChainFunction[],
+}
 
-  const loaders = {
-    script: require.resolve('babel-loader'),
-    style: {
-      loader: require.resolve('postcss-loader'),
-      options: {
-        config: {
-          path: resolve('./postcss.config.js'),
-        },
-      },
-    },
-  }
+export default function createWebpackConfig ({ cwd , webpackChainFns }: Option) {
+  const resolve = (p: string) => path.resolve(cwd, p)
 
   const config = new Config()
 
@@ -54,7 +48,19 @@ export default function createWebpackConfig ({ cwd = process.cwd() }) {
         .end()
       .use('mina')
         .loader(require.resolve('@tinajs/mina-loader'))
-        .options(loaders)
+        .options({
+          loaders: {
+            script: require.resolve('babel-loader'),
+            style: {
+              loader: require.resolve('postcss-loader'),
+              options: {
+                config: {
+                  path: resolve('./postcss.config.js'),
+                },
+              },
+            },
+          },
+        })
         .end()
 
   config.module
@@ -139,6 +145,11 @@ export default function createWebpackConfig ({ cwd = process.cwd() }) {
   config.plugin('runtime')
     .use(MinaRuntimePlugin)
     .end()
+
+  /**
+   * chain webpack
+   */
+  webpackChainFns.forEach((fn) => fn(config, resolve))
 
   return config
 }

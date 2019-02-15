@@ -33,10 +33,11 @@
     "@types/chai": "^4.1.7",
     "@types/mocha": "^5.2.5",
     "@types/node": "^10.12.18",
+    "@types/webpack": "^4.4.24",
     "chai": "^4.2.0",
     "globby": "^8.0.2",
     "mocha": "^5.2.0",
-    "nyc": "^13.0.1",
+    "nyc": "^13.3.0",
     "ts-node": "^8.0.2",
     "tslint": "^5.12.1",
     "typescript": "^3.3.3"
@@ -69,7 +70,7 @@
     "posttest": "tslint -p test -t stylish",
     "prepack": "rm -rf lib && tsc -b && oclif-dev manifest && oclif-dev readme",
     "test": "nyc --extension .ts mocha --forbid-only \"test/**/*.test.ts\"",
-    "version": "oclif-dev readme && git add README.md"
+    "version": "oclif-dev readme && git add readme.md"
   },
   "types": "lib/index.d.ts"
 }

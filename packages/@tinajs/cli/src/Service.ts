@@ -1,28 +1,28 @@
 import * as EventEmitter from 'eventemitter3'
 import * as webpack from 'webpack'
-import * as WebpackConfig from 'webpack-chain'
 import createWebpackConfig from './webpack/config'
-import { EventEmitter } from 'events';
+import WebpackChainFunction from './declarations/WebpackChainFunction'
 
 export default class Service {
-  private webpackConfig: WebpackConfig
+  private webpackChainFns: WebpackChainFunction[] = []
 
-  constructor () {
-    this.webpackConfig = createWebpackConfig({ cwd: process.cwd() })
-  }
-
-  private compiler (watch = false) {
+  private compiler() {
+    const webpackConfig = createWebpackConfig({
+      cwd: process.cwd(),
+      webpackChainFns: this.webpackChainFns,
+    })
     const config = Object.assign({
       entry: './app.mina',
-    }, this.webpackConfig.toConfig())
+    }, webpackConfig.toConfig())
+
     return webpack(config)
   }
 
-  chainWebpack (fn) {
-    fn(this.webpackConfig)
+  chainWebpack(fn: WebpackChainFunction) {
+    this.webpackChainFns.push(fn)
   }
 
-  watch () : EventEmitter {
+  watch(): EventEmitter {
     const bus = new EventEmitter()
     this.compiler().watch({}, (err: Error, stats: any) => {
       if (err) {
@@ -38,7 +38,7 @@ export default class Service {
     return bus
   }
 
-  async build () : Promise<string> {
+  async build(): Promise<string> {
     return new Promise((resolve, reject) => {
       this.compiler().run((err: Error, stats: any) => {
         if (err) {
