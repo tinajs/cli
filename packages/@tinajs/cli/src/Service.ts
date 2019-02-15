@@ -2,11 +2,19 @@ import * as EventEmitter from 'eventemitter3'
 import * as webpack from 'webpack'
 import createWebpackConfig from './webpack/config'
 import WebpackChainFunction from './declarations/WebpackChainFunction'
+import Command from './Command'
 
 export default class Service {
+  private command: Command
   private webpackChainFns: WebpackChainFunction[] = []
 
-  private compiler() {
+  private compiler(): webpack.Compiler {
+    this.command.config.runHook('init_webpack_config', { service: this })
+
+    if (this.command.userConfig.chainWebpack) {
+      this.chainWebpack(this.command.userConfig.chainWebpack)
+    }
+
     const webpackConfig = createWebpackConfig({
       cwd: process.cwd(),
       webpackChainFns: this.webpackChainFns,
@@ -18,12 +26,19 @@ export default class Service {
     return webpack(config)
   }
 
-  chainWebpack(fn: WebpackChainFunction) {
+  constructor (command: Command) {
+    this.command = command
+  }
+
+  chainWebpack(fn: WebpackChainFunction): void {
     this.webpackChainFns.push(fn)
   }
 
   watch(): EventEmitter {
     const bus = new EventEmitter()
+
+    this.command.config.runHook('prewatch', { service: this })
+
     this.compiler().watch({}, (err: Error, stats: any) => {
       if (err) {
         return bus.emit('error', err)
@@ -35,10 +50,13 @@ export default class Service {
 
       bus.emit('stats', stats.toString({ colors: true }))
     })
+
     return bus
   }
 
   async build(): Promise<string> {
+    this.command.config.runHook('prebuild', { service: this })
+
     return new Promise((resolve, reject) => {
       this.compiler().run((err: Error, stats: any) => {
         if (err) {
