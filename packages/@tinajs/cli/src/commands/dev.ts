@@ -1,6 +1,7 @@
-import {Command} from '..'
+import { Command, Plugin } from 'kunkka'
+import WebpackService from '../webpack/WebpackService'
 
-export default class Dev extends Command {
+export class DevCommand extends Command {
   static description = 'developing Mini Program'
 
   static examples = [
@@ -8,8 +9,15 @@ export default class Dev extends Command {
   ]
 
   async run() {
-    const bus = this.service.watch()
-    bus.on('stats', (stats) => this.log(stats))
-    bus.on('error', (error) => this.error(error))
+    const service = new WebpackService(this)
+    const bus = service.watch()
+    bus.on('stats', (stats) => console.log(stats))
+    bus.on('error', (error) => console.error(error))
   }
+}
+
+export const DevPlugin: Plugin = {
+  apply (api) {
+    api.registerCommand('dev', DevCommand)
+  },
 }

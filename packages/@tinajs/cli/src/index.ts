@@ -1,3 +1,5 @@
-export {run} from '@oclif/command'
-export {default as Command} from './Command'
-export {default as Service} from './Service'
+import Cli from "./Cli"
+
+const cli = new Cli()
+
+export default cli

@@ -1,6 +1,7 @@
-import {Command} from '..'
+import { Command, Plugin } from 'kunkka'
+import WebpackService from '../webpack/WebpackService'
 
-export default class Build extends Command {
+export default class BuildCommand extends Command {
   static description = 'build Mini Program for use in production environment'
 
   static examples = [
@@ -8,7 +9,14 @@ export default class Build extends Command {
   ]
 
   async run() {
-    const result = await this.service.build()
-    this.log(result)
+    const service = new WebpackService(this)
+    const result = await service.build()
+    console.log(result)
   }
+}
+
+export const BuildPlugin: Plugin = {
+  apply (api) {
+    api.registerCommand('build', BuildCommand)
+  },
 }

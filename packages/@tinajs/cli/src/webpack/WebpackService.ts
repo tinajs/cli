@@ -1,18 +1,18 @@
 import * as EventEmitter from 'eventemitter3'
 import * as webpack from 'webpack'
-import createWebpackConfig from './webpack/config'
-import WebpackChainFunction from './declarations/WebpackChainFunction'
-import Command from './Command'
+import createWebpackConfig from './config'
+import WebpackChainFunction from '../declarations/WebpackChainFunction'
+import { Command } from 'kunkka'
 
-export default class Service {
+export default class WebpackService {
   private command: Command
   private webpackChainFns: WebpackChainFunction[] = []
 
   private compiler(): webpack.Compiler {
-    this.command.config.runHook('init_webpack_config', { service: this })
+    this.command.hooks.invoke('init_webpack_config', { service: this })
 
-    if (this.command.userConfig.chainWebpack) {
-      this.chainWebpack(this.command.userConfig.chainWebpack)
+    if (this.command.config.chainWebpack) {
+      this.chainWebpack(this.command.config.chainWebpack)
     }
 
     const webpackConfig = createWebpackConfig({
@@ -37,7 +37,7 @@ export default class Service {
   watch(): EventEmitter {
     const bus = new EventEmitter()
 
-    this.command.config.runHook('prewatch', { service: this })
+    this.command.hooks.invoke('prewatch', { service: this })
 
     this.compiler().watch({}, (err: Error, stats: any) => {
       if (err) {
@@ -55,7 +55,7 @@ export default class Service {
   }
 
   async build(): Promise<string> {
-    this.command.config.runHook('prebuild', { service: this })
+    this.command.hooks.invoke('prebuild', { service: this })
 
     return new Promise((resolve, reject) => {
       this.compiler().run((err: Error, stats: any) => {

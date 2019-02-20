@@ -19,7 +19,7 @@ export default function createWebpackConfig ({ cwd , webpackChainFns }: Option) 
 
   config.context(resolve('src'))
 
-  config.output
+  ;(config.output as any)
     .path(resolve('dist'))
     .filename('[name]')
     .publicPath('/')
@@ -38,7 +38,7 @@ export default function createWebpackConfig ({ cwd , webpackChainFns }: Option) 
       name: 'runtime.js',
     })
 
-  config.mode(isProduction ? 'production' : 'none')
+  ;(config.mode as any)(isProduction ? 'production' : 'none')
 
   config.module
     .rule('mina')

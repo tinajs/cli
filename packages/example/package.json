@@ -8,8 +8,8 @@
     "clean": "rimraf \"./dist/!(app.json|project.config.json)**\"",
     "prestart": "run-s clean",
     "prebuild": "run-s clean",
-    "start": "webpack --watch --progress",
-    "build": "cross-env NODE_ENV=production webpack"
+    "start": "tina dev",
+    "build": "cross-env NODE_ENV=production tina build"
   },
   "dependencies": {
     "@tinajs/tina": "^1.4.0"
